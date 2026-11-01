@@ -11,7 +11,8 @@ export function applyJoin(
 ): NormalizedRecord[] {
   const rightByKey = new Map<string, NormalizedRecord[]>();
   for (const row of right) {
-    const key = String(row[on] ?? "");
+    if (!Object.hasOwn(row, on) || row[on] == null) continue;
+    const key = String(row[on]);
     const bucket = rightByKey.get(key) ?? [];
     bucket.push(row);
     rightByKey.set(key, bucket);
@@ -19,7 +20,8 @@ export function applyJoin(
 
   const joined: NormalizedRecord[] = [];
   for (const leftRow of left) {
-    const key = String(leftRow[on] ?? "");
+    if (!Object.hasOwn(leftRow, on) || leftRow[on] == null) continue;
+    const key = String(leftRow[on]);
     const matches = rightByKey.get(key);
     if (!matches) continue;
     for (const rightRow of matches) {
@@ -36,7 +38,7 @@ function prefixConflicts(
 ): NormalizedRecord {
   const out: NormalizedRecord = {};
   for (const [key, value] of Object.entries(right)) {
-    // join 기준 필드는 left 쪽 값과 동일하므로 그대로 두고 중복 표시하지 않는다.
+    // join 기준 필드는 왼쪽 값을 유지하고 중복 표시하지 않는다.
     if (key === joinKey) continue;
     out[key in left ? `right_${key}` : key] = value;
   }

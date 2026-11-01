@@ -157,6 +157,15 @@ npm run typecheck
 npm test
 ```
 
+조인 및 Tool Router 회귀 테스트만 실행하려면:
+
+```bash
+npm test -- tests/dataProcessing/join.test.ts tests/dataProcessing/pipeline.test.ts tests/tools/router.test.ts
+```
+
+위 테스트의 Router는 가짜 Connector를 사용하므로 외부 API를 호출하지 않는다.
+조인 DSL과 결과 규칙은 [조인 안내](docs/api/join.md)를 참고한다.
+
 ### 배포 패키지 빌드
 
 ```bash
